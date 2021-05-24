@@ -1,3 +1,4 @@
+import itertools
 import random
 import string
 
@@ -11,7 +12,11 @@ from bwt_compressor import (
     compress,
     dc_decode,
     dc_encode,
+    decode_integers_from_bytes,
+    decode_next_integer_from_bytes,
     decompress,
+    encode_integer_as_bytes,
+    encode_integers_as_bytes,
     get_alphabet,
     reduce_char_distances,
     restore_text_from_bwt,
@@ -26,9 +31,9 @@ def fixture_dummy():
     pass
 
 
-def test_compress_decompress(max_len=30):
+def test_compress_decompress():
     random.seed(20)
-    for l in range(max_len):
+    for l in itertools.chain(range(100), range(1000, 1010)):
         text = ''.join(random.choice(string.ascii_letters) for _ in range(l))
         compressed_text = compress(text)
         decompressed_text = decompress(compressed_text)
@@ -163,6 +168,50 @@ def test_dc_encode_decode(max_len=100):
         dc = dc_encode(text)
         text_from_dc = dc_decode(dc)
         assert text_from_dc == text
+
+
+@pytest.mark.parametrize(
+    ['integer', 'expected_bytes'],
+    [
+        (0, b'\x00'),
+        (ord('a'), b'a'),
+        (255, b'\xff\x00\x00'),
+        (256, b'\xff\x00\x01'),
+        (255 + 256 ** 2 - 1, b'\xff\xff\xff\x00\x00\x00')
+    ]
+)
+def test_encode_integer_as_bytes(integer, expected_bytes):
+    assert encode_integer_as_bytes(integer) == expected_bytes
+
+
+@pytest.mark.parametrize(
+    ['bytes_', 'expected_integer', 'expected_bytes_consumed'],
+    [
+        (b'\x00', 0, 1),
+        (b'a', ord('a'), 1),
+        (b'ab', ord('a'), 1),
+        (b'\xfe', 254, 1),
+        (b'\xff\x00\x00', 255, 3),
+        (b'\xff\x00\x01', 256, 3),
+    ]
+)
+def test_dencode_next_integer_from_bytes(
+    bytes_, expected_integer, expected_bytes_consumed
+):
+    assert (
+        decode_next_integer_from_bytes(bytes_) ==
+        (expected_integer, expected_bytes_consumed)
+    )
+
+
+def test_encode_decode_integers_bytes(max_len=100, max_int=10000000):
+    random.seed(20)
+    for l in range(max_len):
+        integers = [random.randrange(max_int) for _ in range(l)]
+        bytes_ = encode_integers_as_bytes(integers)
+        integers_decoded = decode_integers_from_bytes(bytes_)
+        assert integers_decoded == integers
+
 
 
 def test_apply_restore_bwt(max_len=100):
