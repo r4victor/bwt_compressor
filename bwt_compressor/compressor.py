@@ -25,7 +25,3 @@ def decompress(compressed_text):
     bwt = dc_decode(dc)
     text = restore_text_from_bwt(bwt)
     return text
-
-
-if __name__ == '__main__':
-    assert apply_bwt('banana') == 'annb\x00aa'

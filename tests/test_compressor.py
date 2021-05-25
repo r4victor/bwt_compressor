@@ -5,7 +5,7 @@ import string
 import pytest
 
 
-from bwt_compressor.bwt_compressor import (
+from bwt_compressor.compressor import (
     compress,
     decompress
 )
