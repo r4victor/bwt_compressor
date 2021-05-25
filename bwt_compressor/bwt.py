@@ -1,5 +1,7 @@
 import itertools
 
+from pydivsufsort import divsufsort
+
 from bwt_compressor.common import (
     ALPHABET_SIZE,
     TERMINATOR_SYMBOL
@@ -24,25 +26,16 @@ def apply_bwt(text):
 
 
 def _build_suffix_array(text):
-    return _build_suffix_array_naive(text)
+    sorted_ranks = divsufsort(text)
+    return _compute_inverse_permutation(sorted_ranks)
 
 
 def _build_suffix_array_naive(text):
     """
     Construct the suffix array in O(n^2logn).
     """
-    n = len(text)
-
-    # build pairs (suffix, suffix start index)
-    suffixes = ((text[i:], i) for i in range(n))
-    sorted_suffixes = list(sorted(suffixes))
-
-    suffix_array = [None] * n
-    for sorted_position in range(n):
-        suffix_start_index = sorted_suffixes[sorted_position][1]
-        suffix_array[suffix_start_index] = sorted_position
-
-    return suffix_array
+    sorted_ranks = [i for _, i in sorted((text[i:], i) for i in range(len(text)))]
+    return _compute_inverse_permutation(sorted_ranks)
 
 
 def restore_text_from_bwt(bwt):

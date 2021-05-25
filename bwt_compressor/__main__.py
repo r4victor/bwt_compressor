@@ -19,7 +19,7 @@ if args.d:
     print(decompress(compressed_text))
 else:
     text = sys.stdin.read()
-    print(compress(text))
+    sys.stdout.buffer.write(compress(text))
 
 
 
