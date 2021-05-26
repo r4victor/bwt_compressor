@@ -15,14 +15,17 @@ def _encode_integer_as_bytes(integer):
 
 
 def decode_integers_from_bytes(bytes_):
-    integers = []
+    integers = [None] * len(bytes_)
+    integers_num = 0
+
     i = 0
     while i < len(bytes_):
         integer, bytes_consumed = _decode_next_integer_from_bytes(bytes_[i:])
-        integers.append(integer)
+        integers[integers_num] = integer
         i += bytes_consumed
+        integers_num += 1
 
-    return integers
+    return integers[:integers_num]
 
 
 def _decode_next_integer_from_bytes(bytes_):

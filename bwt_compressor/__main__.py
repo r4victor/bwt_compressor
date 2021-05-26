@@ -16,6 +16,8 @@ args = parser.parse_args()
 
 if args.d:
     compressed_text = sys.stdin.buffer.read()
+    # import cProfile
+    # cProfile.run('decompress(compressed_text)')
     print(decompress(compressed_text))
 else:
     text = sys.stdin.read()

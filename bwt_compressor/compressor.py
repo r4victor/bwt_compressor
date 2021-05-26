@@ -1,3 +1,5 @@
+import numpy as np
+
 from bwt_compressor.integers_encoding import (
     decode_integers_from_bytes,
     encode_integers_as_bytes
@@ -21,7 +23,8 @@ def compress(text):
 
 
 def decompress(compressed_text):
-    dc = decode_integers_from_bytes(compressed_text)
+    bytes_ = np.frombuffer(compressed_text, dtype=np.uint8)
+    dc = decode_integers_from_bytes(bytes_)
     bwt = dc_decode(dc)
     text = restore_text_from_bwt(bwt)
     return text
