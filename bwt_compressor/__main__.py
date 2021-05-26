@@ -19,6 +19,8 @@ if args.d:
     print(decompress(compressed_text))
 else:
     text = sys.stdin.read()
+    # import cProfile
+    # cProfile.run('compress(text)')
     sys.stdout.buffer.write(compress(text))
 
 

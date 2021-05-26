@@ -49,7 +49,6 @@ def test_compute_char_distances(text, expected_char_distances):
 def test_reduce_char_distances(text, expected_reduced_char_distances):
     text = _get_alphabet() + text
     char_distances = _compute_char_distances(text)
-    reduced_char_distances = _reduce_char_distances(text, char_distances)
     assert (
         _reduce_char_distances(text, char_distances)[ALPHABET_SIZE:] ==
         expected_reduced_char_distances
