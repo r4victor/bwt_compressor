@@ -1,3 +1,4 @@
+from bitarray.util import huffman_code
 import numpy as np
 
 from bwt_compressor.integers_encoding import (
@@ -11,6 +12,7 @@ from bwt_compressor.integers_encoding import (
     encode_integers_as_bytes,
     decode_integers_from_bytes
 )
+from bwt_compressor.huffman import huffman_encode, huffman_decode
 
 
 def compress(text):
@@ -19,12 +21,14 @@ def compress(text):
     bwt = apply_bwt(text)
     dc = dc_encode(bwt)
     bytes_ = encode_integers_as_bytes(dc)
-    return bytes_
+    huffman_code = huffman_encode(bytes_)
+    return huffman_code
 
 
 def decompress(compressed_text):
-    bytes_ = np.frombuffer(compressed_text, dtype=np.uint8)
-    dc = decode_integers_from_bytes(bytes_)
+    dc_as_bytes = huffman_decode(compressed_text)
+    bytes_ndarray = np.frombuffer(dc_as_bytes, dtype=np.uint8)
+    dc = decode_integers_from_bytes(bytes_ndarray)
     bwt = dc_decode(dc)
     text = restore_text_from_bwt(bwt)
     return text
