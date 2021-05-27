@@ -1,4 +1,5 @@
 import itertools
+import warnings
 
 from pydivsufsort import divsufsort
 
@@ -26,7 +27,9 @@ def apply_bwt(text):
 
 
 def _build_suffix_array(text):
-    sorted_ranks = divsufsort(text)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        sorted_ranks = divsufsort(text)
     return _compute_inverse_permutation(sorted_ranks)
 
 
