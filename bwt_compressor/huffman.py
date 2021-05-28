@@ -2,6 +2,7 @@ from typing import Optional
 
 import numpy as np
 
+
 NEW = -1
 
 
@@ -67,7 +68,7 @@ class HuffmanTree:
         while node is not None:
             same_weight_min_idx = self.head.get(node.weight)
 
-            # check if need to swap nodes
+            # Check if we need to swap nodes
             if (same_weight_min_idx is not None and
                 same_weight_min_idx < node.idx and
                 same_weight_min_idx != node.parent.idx
@@ -76,7 +77,7 @@ class HuffmanTree:
                 node = self.tree[same_weight_min_idx]
 
             if self.tree[node.idx + 1].weight == node.weight:
-                # the next node has the same weight
+                # The next node has the same weight
                 self.head[node.weight] = node.idx + 1
             elif (self.head.get(node.weight) is not None and
                   self.head[node.weight] == node.idx
@@ -123,17 +124,17 @@ def huffman_encode(data: bytes) -> bytes:
     ht = HuffmanTree()
     codes = [ht.add_value(byte) for byte in data]
 
-    # we guarantee that the codes are sequences of 0s and 1s
+    # We guarantee that the codes are sequences of 0s and 1s
     code = np.concatenate(codes, dtype=np.uint8, casting='unsafe')
 
-    # prepend code with 0-bits so that its length is a multiple of 8 (byte)
+    # Prepend code with 0-bits so that its length is a multiple of 8 (byte)
     alignment_length = (8 - (len(code) % 8)) % 8
     aligned_code = np.concatenate(
         [[0] * alignment_length, code],
         dtype=np.uint8, casting='unsafe'
     )
     
-    # pack bits to bytes and prepend alignment_length as the first byte
+    # Pack bits to bytes and prepend alignment_length as the first byte
     packed_code = np.packbits(aligned_code)
     return alignment_length.to_bytes(length=1, byteorder='big') + packed_code.tobytes()
 

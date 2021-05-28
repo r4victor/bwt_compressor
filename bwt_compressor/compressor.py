@@ -1,4 +1,3 @@
-from bitarray.util import huffman_code
 import numpy as np
 
 from bwt_compressor.integers_encoding import (
