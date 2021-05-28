@@ -66,4 +66,4 @@ $ cat resources/martin_eden.bwt | python -m bwt_compressor -d > resources/martin
 
 ## Limitations
 
-At this moment the compressor only works with ASCII-texts that do not contain the null byte (`\x00`). This limitation can be lifted in the future.
+At this moment the compressor works only with ASCII-texts that do not contain the null byte (`\x00`). This limitation can be lifted in the future.
