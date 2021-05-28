@@ -8,21 +8,16 @@ import pytest
 from bwt_compressor.huffman import HuffmanTree, huffman_encode, huffman_decode
 
 
-def test_huffman_add_value_get_value():
+def test_huffman_add_value_move_to_node():
     ht = HuffmanTree()
-    r = ht.add_value(1)
-    assert r == bitarray(f'{1:08b}')
-    r = ht.add_value(2)
-    assert r == bitarray(f'1{2:08b}')
-    r = ht.add_value(2)
-    assert r == bitarray('10')
-    r = ht.add_value(2)
-    assert r == bitarray('0')
-    r = ht.add_value(1)
-    assert r == bitarray('10')
+    assert ht.add_value(1) == [0,0,0,0,0,0,0,1]
+    assert ht.add_value(2) == [1,0,0,0,0,0,0,1,0]
+    assert ht.add_value(2) == [1, 0]
+    assert ht.add_value(2) == [0]
+    assert ht.add_value(1) == [1, 0]
 
-    assert ht.get_value(bitarray('0')) == (2, 1)
-    assert ht.get_value(bitarray('10')) == (1, 2)
+    assert ht.move_to_node([0])[0].value == 2
+    assert ht.move_to_node([1, 0])[0].value == 1
 
 
 # def test_huffman_incomplete_code_raises_error():
@@ -33,7 +28,7 @@ def test_huffman_add_value_get_value():
 #         ht.get_value(bitarray('1'))
 
 
-def test_huffman_encode_decode(max_len=100):
+def test_huffman_encode_decode(max_len=50):
     random.seed(20)
     for l in range(1, max_len):
         data = ''.join(random.choice(string.ascii_letters) for _ in range(l)).encode()
